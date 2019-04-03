@@ -11,21 +11,25 @@ public:
 class SharedPtr{
     Data* ptrD;
     int* counter;
-
+    
 public:
     SharedPtr(Data* newPtr): ptrD(newPtr){
+        cout << "call shrdptr init constructor" << endl;
         counter = new int{1};
     }
     SharedPtr(SharedPtr const & newPtr): ptrD(newPtr.ptrD), counter(newPtr.counter){
+        cout << "call shrdptr copy constructor" << endl;
         (*counter)++;
     }
     SharedPtr &operator= (SharedPtr const & exPtr){
+        cout << "call shrdptr operator=" << endl;
         this->ptrD = exPtr.ptrD;
         this->counter = exPtr.counter;
         (*counter)++;
         return *this;
     }
-    ~SharedPtr(){
+    ~SharedPtr() {
+        cout << "call shrdptr destructor" << endl;
         if((*counter)== 1){
             free(ptrD);
             delete(counter);
