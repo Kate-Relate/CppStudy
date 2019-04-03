@@ -13,45 +13,64 @@ class SharedPtr{
     int* counter;
     
 public:
+    SharedPtr() {
+        cout << "call shrdptr default constructor" << endl;
+        counter = NULL;
+        ptrD = NULL;
+    };
+    
     SharedPtr(Data* newPtr): ptrD(newPtr){
         cout << "call shrdptr init constructor" << endl;
-        counter = new int{1};
+        counter = new int(1);
     }
     SharedPtr(SharedPtr const & newPtr): ptrD(newPtr.ptrD), counter(newPtr.counter){
         cout << "call shrdptr copy constructor" << endl;
         (*counter)++;
     }
-    SharedPtr &operator= (SharedPtr const & exPtr){
+    SharedPtr &operator= (SharedPtr & exPtr) {
         cout << "call shrdptr operator=" << endl;
-        this->ptrD = exPtr.ptrD;
-        this->counter = exPtr.counter;
+        
+        this->~SharedPtr();
+        
+        counter = exPtr.counter;
+        ptrD = exPtr.ptrD;
         (*counter)++;
+        
         return *this;
     }
+    
     ~SharedPtr() {
+        if (counter == NULL)
+            return;
+        
         cout << "call shrdptr destructor" << endl;
-        if((*counter)== 1){
-            free(ptrD);
-            delete(counter);
-        } else (*counter)--;
+        
+        
+        (*counter)--;
+        cout << "update counter:" << *counter<< endl;
+        
+        
+        if((*counter)== 0){
+            cout << "delete data" << endl;
+            delete ptrD;
+            delete counter;
+        }
     }
 };
 
 int main() {
-
-
-    Data newD(3);
-    SharedPtr p1(&newD);
-    Data newD2(2);
-    SharedPtr p2(&newD2);
-    p2 = p1;
-    Data newD4(4);
-    SharedPtr p3(&newD4);
-
-
-
-
-
-
+    
+    {
+        SharedPtr p1(new Data(1));
+        SharedPtr p2(new Data(2));
+        SharedPtr p3(p1);
+        p2 = p1;
+    }
+    SharedPtr p3;
+    
+    
+    
+    
+    
     return 0;
 }
